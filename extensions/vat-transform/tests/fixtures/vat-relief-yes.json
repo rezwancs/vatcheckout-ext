@@ -1,0 +1,41 @@
+{
+    "payload": {
+        "export": "cart-transform-run",
+        "target": "cart.transform.run",
+        "input": {
+            "cart": {
+                "attribute": {
+                    "value": "yes_self"
+                },
+                "lines": [
+                    {
+                        "id": "gid://shopify/CartLine/1",
+                        "quantity": 1,
+                        "cost": {
+                            "amountPerQuantity": {
+                                "amount": "12.00",
+                                "currencyCode": "GBP"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        "output": {
+            "operations": [
+                {
+                    "lineUpdate": {
+                        "cartLineId": "gid://shopify/CartLine/1",
+                        "price": {
+                            "adjustment": {
+                                "fixedPricePerUnit": {
+                                    "amount": "10.00"
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}
