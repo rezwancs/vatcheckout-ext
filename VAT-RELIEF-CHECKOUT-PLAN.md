@@ -45,7 +45,7 @@ Each step below ends with **STOP → you confirm/test on checkout/dev store → 
 
 - [ ] Step 0: Pull theme, create VAT Contact page + form; confirm email to `info@movinglife.co.uk`
 - [x] Step 1: Make `vat-transform` a no-op; fix tests; confirm prices unchanged (code done — awaiting your checkout confirm)
-- [ ] Step 2: Add eligible person name + condition fields; save cart attributes
+- [x] Step 2: Add eligible person name + condition fields; save cart attributes (code done — awaiting your checkout confirm)
 - [ ] Step 3: UI intercept + Validation function to block No / incomplete Yes
 - [ ] Step 4: Continue CTA opens Contact page with name/phone/email/postcode prefills
 - [ ] Step 5: Final B5 copy, declaration link back to checkout, full E2E test
