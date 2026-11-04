@@ -1,0 +1,27 @@
+{
+  "payload": {
+    "export": "cart-validations-generate-run",
+    "target": "cart.validations.generate.run",
+    "input": {
+      "cart": {
+        "reason": { "value": "yes_else" },
+        "eligibleName": { "value": "Jane Doe" },
+        "condition": { "value": "" }
+      }
+    },
+    "output": {
+      "operations": [
+        {
+          "validationAdd": {
+            "errors": [
+              {
+                "message": "Please enter the eligible person name and select a condition to continue.",
+                "target": "$.cart"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

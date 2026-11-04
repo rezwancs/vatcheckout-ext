@@ -1,0 +1,22 @@
+{
+  "payload": {
+    "export": "cart-validations-generate-run",
+    "target": "cart.validations.generate.run",
+    "input": {
+      "cart": {
+        "reason": { "value": "yes_self" },
+        "eligibleName": { "value": "Jane Doe" },
+        "condition": { "value": "Arthritis" }
+      }
+    },
+    "output": {
+      "operations": [
+        {
+          "validationAdd": {
+            "errors": []
+          }
+        }
+      ]
+    }
+  }
+}

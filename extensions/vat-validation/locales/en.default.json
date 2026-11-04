@@ -1,0 +1,4 @@
+{
+  "name": "VAT Relief Validation",
+  "description": "Blocks checkout unless VAT relief is declared with eligible person name and condition."
+}

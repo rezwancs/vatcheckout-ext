@@ -24,6 +24,10 @@ target = "purchase.checkout.block.render"
 # https://shopify.dev/docs/api/checkout-ui-extensions/latest/configuration#api-access
 api_access = true
 
+# Allows the extension to block checkout progress until VAT declaration is complete.
+# https://shopify.dev/docs/api/checkout-ui-extensions/latest/configuration#block-progress
+block_progress = true
+
 # Gives your extension access to make external network calls, using the
 # JavaScript `fetch()` API. Learn more:
 # https://shopify.dev/docs/api/checkout-ui-extensions/latest/configuration#network-access

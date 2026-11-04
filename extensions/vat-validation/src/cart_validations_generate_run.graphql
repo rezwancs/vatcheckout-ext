@@ -1,0 +1,13 @@
+query CartValidationsGenerateRunInput {
+  cart {
+    reason: attribute(key: "_vat_relief_reason") {
+      value
+    }
+    eligibleName: attribute(key: "_vat_relief_name") {
+      value
+    }
+    condition: attribute(key: "_vat_relief_condition") {
+      value
+    }
+  }
+}

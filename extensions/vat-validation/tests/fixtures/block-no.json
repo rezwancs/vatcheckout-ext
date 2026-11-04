@@ -1,0 +1,27 @@
+{
+  "payload": {
+    "export": "cart-validations-generate-run",
+    "target": "cart.validations.generate.run",
+    "input": {
+      "cart": {
+        "reason": { "value": "no_health" },
+        "eligibleName": null,
+        "condition": null
+      }
+    },
+    "output": {
+      "operations": [
+        {
+          "validationAdd": {
+            "errors": [
+              {
+                "message": "Online payment isn't available without a VAT relief declaration. Select Yes and enter the eligible person name and condition, or continue so we can contact you.",
+                "target": "$.cart"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

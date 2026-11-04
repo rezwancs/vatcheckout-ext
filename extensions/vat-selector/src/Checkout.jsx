@@ -1,6 +1,6 @@
 import '@shopify/ui-extensions/preact';
 import { render } from "preact";
-import { useRef, useState } from "preact/hooks";
+import { useEffect, useRef, useState } from "preact/hooks";
 
 const ATTR_REASON = "_vat_relief_reason";
 const ATTR_NAME = "_vat_relief_name";
@@ -49,7 +49,26 @@ async function clearAttribute(key) {
   });
 }
 
+function getBlockMessage(reason, name, condition) {
+  if (!reason) {
+    return "Please complete the VAT Relief Form to continue.";
+  }
+
+  if (reason.startsWith("no")) {
+    return "Online payment isn't available without a VAT relief declaration. Select Yes and enter the eligible person name and condition, or continue so we can contact you.";
+  }
+
+  if (reason.startsWith("yes") && (!name.trim() || !condition)) {
+    return "Please enter the eligible person name and select a condition to continue.";
+  }
+
+  return "";
+}
+
 function Extension() {
+  const canUpdateAttributes =
+    shopify.instructions.value.attributes.canUpdateAttributes;
+
   const [selectedValues, setSelectedValues] = useState(() => {
     const reason = getAttributeValue(ATTR_REASON);
     return reason ? [reason] : [];
@@ -61,17 +80,62 @@ function Extension() {
     getAttributeValue(ATTR_CONDITION)
   );
   const nameTimerRef = useRef(null);
+  const declarationRef = useRef({
+    reason: "",
+    name: "",
+    condition: "",
+  });
 
-  if (!shopify.instructions.value.attributes.canUpdateAttributes) {
+  const selectedReason = selectedValues[0] ?? "";
+  const isYes = selectedReason.startsWith("yes");
+  const blockMessage = getBlockMessage(
+    selectedReason,
+    eligibleName,
+    condition
+  );
+  const isBlocked = Boolean(blockMessage);
+
+  declarationRef.current = {
+    reason: selectedReason,
+    name: eligibleName,
+    condition,
+  };
+
+  useEffect(() => {
+    if (!canUpdateAttributes) {
+      return undefined;
+    }
+
+    const teardownPromise = shopify.buyerJourney.intercept(
+      ({ canBlockProgress }) => {
+        const { reason, name, condition: selectedCondition } =
+          declarationRef.current;
+        const message = getBlockMessage(reason, name, selectedCondition);
+
+        if (canBlockProgress && message) {
+          return {
+            behavior: "block",
+            reason: message,
+            errors: [{ message }],
+          };
+        }
+
+        return { behavior: "allow" };
+      }
+    );
+
+    return () => {
+      teardownPromise.then((teardown) => teardown?.());
+    };
+  }, [canUpdateAttributes]);
+
+  if (!canUpdateAttributes) {
     return (
       <s-banner heading="VAT Relief Form" tone="warning">
         {shopify.i18n.translate("attributeChangesAreNotSupported")}
       </s-banner>
     );
   }
-
-  const selectedReason = selectedValues[0] ?? "";
-  const isYes = selectedReason.startsWith("yes");
 
   const handleReasonChange = async (e) => {
     const values = e.currentTarget.values;
@@ -178,6 +242,12 @@ function Extension() {
             ))}
           </s-select>
         </s-stack>
+      )}
+
+      {isBlocked && (
+        <s-banner heading="Checkout blocked" tone="critical">
+          {blockMessage}
+        </s-banner>
       )}
     </s-stack>
   );
