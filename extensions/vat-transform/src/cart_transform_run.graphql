@@ -1,26 +1,7 @@
 query CartTransformRunInput {
   cart {
-    attribute(key: "_vat_relief_reason") {
-      value
-    }
     lines {
       id
-      quantity
-      merchandise {
-        __typename
-        ... on ProductVariant {
-          title
-          product {
-            title
-          }
-        }
-      }
-      cost {
-        amountPerQuantity {
-          amount
-          currencyCode
-        }
-      }
     }
   }
 }
