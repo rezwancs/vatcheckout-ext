@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "preact/hooks";
 const ATTR_REASON = "_vat_relief_reason";
 const ATTR_NAME = "_vat_relief_name";
 const ATTR_CONDITION = "_vat_relief_condition";
+const DEFAULT_CONTACT_PATH = "/pages/vat-relief-enquiry";
 
 const CONDITIONS = [
   "Arthritis",
@@ -55,7 +56,7 @@ function getBlockMessage(reason, name, condition) {
   }
 
   if (reason.startsWith("no")) {
-    return "Online payment isn't available without a VAT relief declaration. Select Yes and enter the eligible person name and condition, or continue so we can contact you.";
+    return 'Online payment isn\'t available without a VAT relief declaration. Use "Continue — we will contact you", or select Yes and complete the declaration.';
   }
 
   if (reason.startsWith("yes") && (!name.trim() || !condition)) {
@@ -63,6 +64,47 @@ function getBlockMessage(reason, name, condition) {
   }
 
   return "";
+}
+
+function readCheckoutContactDetails() {
+  const shipping = shopify.shippingAddress?.value;
+  const email = shopify.buyerIdentity?.email?.value ?? "";
+  const phone =
+    shopify.buyerIdentity?.phone?.value || shipping?.phone || "";
+  const name = shipping?.name || "";
+  const postcode = shipping?.zip || "";
+
+  return { name, email, phone, postcode };
+}
+
+function buildContactPageUrl() {
+  const settings = shopify.settings?.value ?? {};
+  const configuredPath = (settings.contact_page_path || "").trim();
+  const path = configuredPath || DEFAULT_CONTACT_PATH;
+
+  const storefrontUrl = shopify.shop?.storefrontUrl?.replace(/\/$/, "") ?? "";
+  const fallbackOrigin = shopify.shop?.myshopifyDomain
+    ? `https://${shopify.shop.myshopifyDomain}`
+    : "";
+  const origin = storefrontUrl || fallbackOrigin;
+
+  let url;
+  try {
+    url = path.startsWith("http")
+      ? new URL(path)
+      : new URL(path.startsWith("/") ? path : `/${path}`, `${origin}/`);
+  } catch (err) {
+    console.error("Invalid VAT contact page path:", err);
+    return "";
+  }
+
+  const details = readCheckoutContactDetails();
+  if (details.name) url.searchParams.set("name", details.name);
+  if (details.email) url.searchParams.set("email", details.email);
+  if (details.phone) url.searchParams.set("phone", details.phone);
+  if (details.postcode) url.searchParams.set("postcode", details.postcode);
+
+  return url.toString();
 }
 
 function Extension() {
@@ -79,6 +121,7 @@ function Extension() {
   const [condition, setCondition] = useState(() =>
     getAttributeValue(ATTR_CONDITION)
   );
+  const [contactUrl, setContactUrl] = useState("");
   const nameTimerRef = useRef(null);
   const declarationRef = useRef({
     reason: "",
@@ -88,6 +131,7 @@ function Extension() {
 
   const selectedReason = selectedValues[0] ?? "";
   const isYes = selectedReason.startsWith("yes");
+  const isNo = selectedReason.startsWith("no");
   const blockMessage = getBlockMessage(
     selectedReason,
     eligibleName,
@@ -128,6 +172,31 @@ function Extension() {
       teardownPromise.then((teardown) => teardown?.());
     };
   }, [canUpdateAttributes]);
+
+  useEffect(() => {
+    if (!isNo) {
+      setContactUrl("");
+      return undefined;
+    }
+
+    const updateUrl = () => setContactUrl(buildContactPageUrl());
+    updateUrl();
+
+    const unsubscribes = [];
+    if (shopify.shippingAddress?.subscribe) {
+      unsubscribes.push(shopify.shippingAddress.subscribe(updateUrl));
+    }
+    if (shopify.buyerIdentity?.email?.subscribe) {
+      unsubscribes.push(shopify.buyerIdentity.email.subscribe(updateUrl));
+    }
+    if (shopify.buyerIdentity?.phone?.subscribe) {
+      unsubscribes.push(shopify.buyerIdentity.phone.subscribe(updateUrl));
+    }
+
+    return () => {
+      unsubscribes.forEach((unsubscribe) => unsubscribe?.());
+    };
+  }, [isNo]);
 
   if (!canUpdateAttributes) {
     return (
@@ -244,7 +313,24 @@ function Extension() {
         </s-stack>
       )}
 
-      {isBlocked && (
+      {isNo && (
+        <s-stack gap="base">
+          <s-banner heading="We will contact you" tone="warning">
+            Payment stays blocked here. Tap the button below to send your details — this does not finish checkout automatically.
+          </s-banner>
+          {contactUrl ? (
+            <s-button href={contactUrl} target="_blank" variant="primary">
+              Continue — we will contact you
+            </s-button>
+          ) : (
+            <s-banner tone="critical">
+              Contact page URL could not be built. Set “VAT Contact page path” in the checkout editor settings.
+            </s-banner>
+          )}
+        </s-stack>
+      )}
+
+      {isBlocked && !isNo && (
         <s-banner heading="Checkout blocked" tone="critical">
           {blockMessage}
         </s-banner>

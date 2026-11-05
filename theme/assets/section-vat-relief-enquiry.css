@@ -1,0 +1,239 @@
+/* Movinglife UK brand tokens — matched to /pages/contact-us */
+.vat-relief-enquiry {
+  --ml-navy: #223872;
+  --ml-blue: #0879a6;
+  --ml-blue-hover: #06658c;
+  --ml-text: #223872;
+  --ml-muted: #6b7a99;
+  --ml-border: rgba(0, 0, 0, 0.32);
+  --ml-bg: #ffffff;
+  --ml-success-bg: #e8f6ec;
+  --ml-error-bg: #fdecec;
+  --ml-font-heading: Montserrat, "Open Sans", sans-serif;
+  --ml-font-body: "Open Sans", Montserrat, sans-serif;
+
+  background: var(--ml-bg);
+  color: var(--ml-text);
+  font-family: var(--ml-font-body);
+  padding: 2.5rem 1.25rem 3.5rem;
+}
+
+.vat-relief-enquiry__inner {
+  max-width: 60rem;
+  margin: 0 auto;
+}
+
+.vat-relief-enquiry__eyebrow {
+  margin: 0 0 0.65rem;
+  color: var(--ml-blue);
+  font-family: var(--ml-font-heading);
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.vat-relief-enquiry__title {
+  margin: 0 0 1rem;
+  color: var(--ml-navy);
+  font-family: var(--ml-font-heading);
+  font-size: clamp(2rem, 5vw, 2.5rem);
+  font-weight: 900;
+  line-height: 1.15;
+  text-transform: uppercase;
+}
+
+.vat-relief-enquiry__intro {
+  margin: 0 0 1.75rem;
+  color: var(--ml-muted);
+  font-size: 1.125rem;
+  line-height: 1.6;
+}
+
+.vat-relief-enquiry__message {
+  margin: 0 0 1.75rem;
+  color: var(--ml-navy);
+  font-size: 1.125rem;
+  line-height: 1.65;
+}
+
+.vat-relief-enquiry__message p {
+  margin: 0 0 0.75rem;
+}
+
+.vat-relief-enquiry__message p:last-child {
+  margin-bottom: 0;
+}
+
+.vat-relief-enquiry__message a {
+  color: var(--ml-blue);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.vat-relief-enquiry__help {
+  margin: 0 0 1.25rem;
+  color: var(--ml-navy);
+  font-family: var(--ml-font-heading);
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+.vat-relief-enquiry__help-copy {
+  margin: 0 0 1.5rem;
+  color: var(--ml-navy);
+  font-size: 1.125rem;
+  line-height: 1.6;
+}
+
+.vat-relief-enquiry__help-copy a {
+  color: var(--ml-blue);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.vat-relief-enquiry__help-copy a:hover {
+  text-decoration: underline;
+}
+
+.vat-relief-enquiry__form {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.vat-relief-enquiry__field {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.vat-relief-enquiry__field label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.vat-relief-enquiry__field input,
+.vat-relief-enquiry__field textarea {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 52px;
+  padding: 14px 16px;
+  border: 1px solid var(--ml-border);
+  border-radius: 8px;
+  background: transparent;
+  color: #000;
+  font-family: var(--ml-font-heading);
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.5;
+  appearance: none;
+}
+
+.vat-relief-enquiry__field textarea {
+  min-height: 140px;
+  resize: vertical;
+}
+
+.vat-relief-enquiry__field input::placeholder,
+.vat-relief-enquiry__field textarea::placeholder {
+  color: #9aa3b5;
+  opacity: 1;
+}
+
+.vat-relief-enquiry__field input:focus,
+.vat-relief-enquiry__field textarea:focus {
+  outline: 2px solid var(--ml-blue);
+  outline-offset: 1px;
+  border-color: var(--ml-blue);
+}
+
+.vat-relief-enquiry__submit {
+  box-sizing: border-box;
+  width: 100%;
+  margin-top: 0.35rem;
+  padding: 16px 28px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--ml-blue);
+  color: #fff;
+  font-family: var(--ml-font-heading);
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: 1.5;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.vat-relief-enquiry__submit:hover,
+.vat-relief-enquiry__submit:focus-visible {
+  background: var(--ml-blue-hover);
+}
+
+.vat-relief-enquiry__success {
+  margin: 0 0 0.85rem;
+  padding: 0.85rem 1rem;
+  border-radius: 8px;
+  background: var(--ml-success-bg);
+  color: var(--ml-navy);
+  font-size: 1.0625rem;
+  line-height: 1.5;
+}
+
+.vat-relief-enquiry__errors {
+  margin: 0 0 0.85rem;
+  padding: 0.85rem 1rem;
+  border-radius: 8px;
+  background: var(--ml-error-bg);
+  color: #7f1d1d;
+  font-size: 1.0625rem;
+  line-height: 1.5;
+}
+
+.vat-relief-enquiry__declaration {
+  margin: 1.75rem 0 0;
+  color: var(--ml-navy);
+  font-size: 1.0625rem;
+  line-height: 1.6;
+}
+
+.vat-relief-enquiry__declaration a {
+  color: var(--ml-blue);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+@media screen and (min-width: 750px) {
+  .vat-relief-enquiry {
+    padding: 3.5rem 2rem 4.5rem;
+  }
+
+
+  .vat-relief-enquiry__title {
+    font-size: 2.75rem;
+  }
+
+  .vat-relief-enquiry__intro,
+  .vat-relief-enquiry__message,
+  .vat-relief-enquiry__help-copy {
+    font-size: 1.25rem;
+  }
+
+  .vat-relief-enquiry__help {
+    font-size: 1.5rem;
+  }
+
+  .vat-relief-enquiry__field input,
+  .vat-relief-enquiry__field textarea,
+  .vat-relief-enquiry__submit {
+    font-size: 1.125rem;
+  }
+}

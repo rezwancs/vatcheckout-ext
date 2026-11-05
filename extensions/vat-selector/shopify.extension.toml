@@ -48,9 +48,9 @@ block_progress = true
 # your extension. Learn more:
 # https://shopify.dev/docs/api/checkout-ui-extensions/latest/configuration#settings-definition
 
-# [extensions.settings]
-# [[extensions.settings.fields]]
-# key = "banner_title"
-# type = "single_line_text_field"
-# name = "Banner title"
-# description = "Enter a title for the banner"
+[extensions.settings]
+[[extensions.settings.fields]]
+key = "contact_page_path"
+type = "single_line_text_field"
+name = "VAT Contact page path"
+description = "Storefront path for the VAT relief enquiry page (e.g. /pages/vat-relief-enquiry)"

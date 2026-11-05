@@ -1,0 +1,239 @@
+{% comment %}
+  VAT Relief enquiry — styled to match Movinglife UK contact-us page.
+  Prefills name, phone, email, postcode from checkout query params.
+  Create a Page in Admin using template "vat-relief-enquiry".
+  Store contact recipient email should be info@movinglife.co.uk.
+{% endcomment %}
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+  href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Open+Sans:wght@400;600&display=swap"
+  rel="stylesheet"
+>
+{{ 'section-vat-relief-enquiry.css' | asset_url | stylesheet_tag }}
+
+<section class="vat-relief-enquiry" id="VatReliefEnquiry">
+  <div class="vat-relief-enquiry__inner page-width">
+    {% if section.settings.eyebrow != blank %}
+      <p class="vat-relief-enquiry__eyebrow">{{ section.settings.eyebrow | escape }}</p>
+    {% endif %}
+
+    <h1 class="vat-relief-enquiry__title">
+      {{ section.settings.heading | default: page.title | escape }}
+    </h1>
+
+    {% if section.settings.intro != blank %}
+      <p class="vat-relief-enquiry__intro">{{ section.settings.intro | escape }}</p>
+    {% endif %}
+
+    <div class="vat-relief-enquiry__message rte">
+      {{ section.settings.message }}
+    </div>
+
+    {% if section.settings.help_heading != blank %}
+      <p class="vat-relief-enquiry__help">{{ section.settings.help_heading | escape }}</p>
+    {% endif %}
+
+    {% if section.settings.help_copy != blank %}
+      <p class="vat-relief-enquiry__help-copy">
+        {{ section.settings.help_copy }}
+      </p>
+    {% endif %}
+
+    {% form 'contact', id: 'VatReliefContactForm', class: 'vat-relief-enquiry__form' %}
+      {% if form.posted_successfully? %}
+        <p class="vat-relief-enquiry__success" role="status">
+          {{ section.settings.success_message }}
+        </p>
+      {% endif %}
+
+      {% if form.errors %}
+        <div class="vat-relief-enquiry__errors" role="alert">
+          {{ form.errors | default_errors }}
+        </div>
+      {% endif %}
+
+      <div class="vat-relief-enquiry__field">
+        <label for="VatRelief-name">Full name</label>
+        <input
+          class="mlf-input"
+          type="text"
+          id="VatRelief-name"
+          name="contact[name]"
+          autocomplete="name"
+          placeholder="Full name"
+          required
+          value="{% if form.name %}{{ form.name }}{% endif %}"
+        >
+      </div>
+
+      <div class="vat-relief-enquiry__field">
+        <label for="VatRelief-phone">Phone</label>
+        <input
+          class="mlf-input"
+          type="tel"
+          id="VatRelief-phone"
+          name="contact[phone]"
+          autocomplete="tel"
+          placeholder="Phone"
+          value="{% if form.phone %}{{ form.phone }}{% endif %}"
+        >
+      </div>
+
+      <div class="vat-relief-enquiry__field">
+        <label for="VatRelief-email">Email</label>
+        <input
+          class="mlf-input"
+          type="email"
+          id="VatRelief-email"
+          name="contact[email]"
+          autocomplete="email"
+          placeholder="Email"
+          required
+          value="{% if form.email %}{{ form.email }}{% endif %}"
+        >
+      </div>
+
+      <div class="vat-relief-enquiry__field">
+        <label for="VatRelief-postcode">Postcode</label>
+        <input
+          class="mlf-input"
+          type="text"
+          id="VatRelief-postcode"
+          name="contact[Postcode]"
+          autocomplete="postal-code"
+          placeholder="Postcode"
+        >
+      </div>
+
+      <div class="vat-relief-enquiry__field">
+        <label for="VatRelief-body">Message</label>
+        <textarea
+          class="mlf-input"
+          id="VatRelief-body"
+          name="contact[body]"
+          rows="5"
+          placeholder="Message"
+        >{% if form.body %}{{ form.body }}{% else %}{{ section.settings.default_body }}{% endif %}</textarea>
+      </div>
+
+      <button type="submit" class="vat-relief-enquiry__submit mlf-button">
+        {{ section.settings.submit_label }}
+      </button>
+    {% endform %}
+
+    <p class="vat-relief-enquiry__declaration">
+      {{ section.settings.declaration_prefix }}
+      <a href="{{ routes.cart_url }}">{{ section.settings.declaration_link_label }}</a>
+      {{ section.settings.declaration_suffix }}
+    </p>
+  </div>
+</section>
+
+<script>
+  (function () {
+    var params = new URLSearchParams(window.location.search);
+    var map = {
+      name: 'VatRelief-name',
+      email: 'VatRelief-email',
+      phone: 'VatRelief-phone',
+      postcode: 'VatRelief-postcode'
+    };
+
+    Object.keys(map).forEach(function (key) {
+      var value = params.get(key);
+      var el = document.getElementById(map[key]);
+      if (value && el && !el.value) {
+        el.value = value;
+      }
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "VAT Relief enquiry",
+  "tag": "section",
+  "class": "section-vat-relief-enquiry",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Movinglife UK"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "VAT relief enquiry"
+    },
+    {
+      "type": "text",
+      "id": "intro",
+      "label": "Intro",
+      "default": "Reach out to our friendly mobility experts and we’ll help you along the way with your Movinglife order."
+    },
+    {
+      "type": "richtext",
+      "id": "message",
+      "label": "VAT message",
+      "default": "<p>Unfortunately we aren't able to process VAT receipts online. Someone will contact you in the next 24 hours to process the order. If you have a long term medical condition, click here to make a declaration to avoid any delays.</p>"
+    },
+    {
+      "type": "text",
+      "id": "help_heading",
+      "label": "Help heading",
+      "default": "How can we help?"
+    },
+    {
+      "type": "html",
+      "id": "help_copy",
+      "label": "Help copy (HTML allowed)",
+      "default": "Contact us on <a href=\"tel:08081754199\">0808 175 4199</a> or fill out the form below and we will contact you as soon as we can."
+    },
+    {
+      "type": "textarea",
+      "id": "default_body",
+      "label": "Default message body",
+      "default": "Please contact me about my order. I was unable to complete checkout without a VAT relief declaration."
+    },
+    {
+      "type": "text",
+      "id": "submit_label",
+      "label": "Submit button label",
+      "default": "Submit"
+    },
+    {
+      "type": "text",
+      "id": "success_message",
+      "label": "Success message",
+      "default": "Thanks — we have received your enquiry and will contact you within 24 hours."
+    },
+    {
+      "type": "text",
+      "id": "declaration_prefix",
+      "label": "Declaration text before link",
+      "default": "If you have a long term medical condition,"
+    },
+    {
+      "type": "text",
+      "id": "declaration_link_label",
+      "label": "Declaration link label",
+      "default": "click here to make a declaration"
+    },
+    {
+      "type": "text",
+      "id": "declaration_suffix",
+      "label": "Declaration text after link",
+      "default": "to avoid any delays (declaration is completed in checkout)."
+    }
+  ],
+  "presets": [
+    {
+      "name": "VAT Relief enquiry"
+    }
+  ]
+}
+{% endschema %}
