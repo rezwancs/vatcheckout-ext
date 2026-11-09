@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "preact/hooks";
 const ATTR_REASON = "_vat_relief_reason";
 const ATTR_NAME = "_vat_relief_name";
 const ATTR_CONDITION = "_vat_relief_condition";
+const DEFAULT_REASON = "yes_self";
 const DEFAULT_CONTACT_PATH = "/pages/vat-relief-enquiry";
 
 const CONDITIONS = [
@@ -120,7 +121,7 @@ function Extension() {
 
   const [selectedValues, setSelectedValues] = useState(() => {
     const reason = getAttributeValue(ATTR_REASON);
-    return reason ? [reason] : [];
+    return [reason || DEFAULT_REASON];
   });
   const [eligibleName, setEligibleName] = useState(() =>
     getAttributeValue(ATTR_NAME)
@@ -136,9 +137,12 @@ function Extension() {
     condition: "",
   });
 
-  const selectedReason = selectedValues[0] ?? "";
+  const selectedReason = selectedValues[0] ?? DEFAULT_REASON;
   const isYes = selectedReason.startsWith("yes");
   const isNo = selectedReason.startsWith("no");
+  const nameMissing = !eligibleName.trim();
+  const conditionMissing = !condition;
+  const declarationIncomplete = isYes && (nameMissing || conditionMissing);
   const blockMessage = getBlockMessage(
     selectedReason,
     eligibleName,
@@ -151,6 +155,23 @@ function Extension() {
     name: eligibleName,
     condition,
   };
+
+  // Default first Yes option and persist it if nothing was saved yet
+  useEffect(() => {
+    if (!canUpdateAttributes) {
+      return undefined;
+    }
+
+    const existingReason = getAttributeValue(ATTR_REASON);
+    if (!existingReason) {
+      setSelectedValues([DEFAULT_REASON]);
+      void setAttribute(ATTR_REASON, DEFAULT_REASON).catch((err) => {
+        console.error("Error setting default VAT relief reason:", err);
+      });
+    }
+
+    return undefined;
+  }, [canUpdateAttributes]);
 
   useEffect(() => {
     if (!canUpdateAttributes) {
@@ -295,29 +316,53 @@ function Extension() {
       </s-choice-list>
 
       {isYes && (
-        <s-stack gap="base">
-          <s-text-field
-            label="Eligible person name"
-            name="vat-relief-eligible-name"
-            value={eligibleName}
-            onInput={handleNameInput}
-            autocomplete="name"
-          />
+        <s-section heading="VAT relief declaration">
+          <s-box padding="base" border="base" borderRadius="base">
+            <s-stack gap="base">
+              {declarationIncomplete && (
+                <s-banner heading="Required to continue" tone="warning">
+                  Enter the eligible person’s name and select a condition to unlock payment.
+                </s-banner>
+              )}
 
-          <s-select
-            label="Condition"
-            name="vat-relief-condition"
-            value={condition}
-            onChange={handleConditionChange}
-          >
-            <s-option value="">Select a condition</s-option>
-            {CONDITIONS.map((item) => (
-              <s-option key={item} value={item}>
-                {item}
-              </s-option>
-            ))}
-          </s-select>
-        </s-stack>
+              <s-text type="small">
+                These details are required before you can complete your order.
+              </s-text>
+
+              <s-text-field
+                label="Eligible person name *"
+                name="vat-relief-eligible-name"
+                value={eligibleName}
+                onInput={handleNameInput}
+                autocomplete="name"
+                required
+                error={
+                  nameMissing
+                    ? "Enter the eligible person’s name"
+                    : undefined
+                }
+              />
+
+              <s-select
+                label="Condition *"
+                name="vat-relief-condition"
+                value={condition}
+                onChange={handleConditionChange}
+                required
+                error={
+                  conditionMissing ? "Select a condition" : undefined
+                }
+              >
+                <s-option value="">Select a condition</s-option>
+                {CONDITIONS.map((item) => (
+                  <s-option key={item} value={item}>
+                    {item}
+                  </s-option>
+                ))}
+              </s-select>
+            </s-stack>
+          </s-box>
+        </s-section>
       )}
 
       {isNo && (
@@ -327,7 +372,7 @@ function Extension() {
           </s-banner>
           {contactUrl ? (
             <s-button href={contactUrl} target="_blank" variant="primary">
-              Continue — we will contact you
+              Continue - we will contact you
             </s-button>
           ) : (
             <s-banner tone="critical">
@@ -337,7 +382,7 @@ function Extension() {
         </s-stack>
       )}
 
-      {isBlocked && !isNo && (
+      {isBlocked && !isNo && !declarationIncomplete && (
         <s-banner heading="Checkout blocked" tone="critical">
           {blockMessage}
         </s-banner>
